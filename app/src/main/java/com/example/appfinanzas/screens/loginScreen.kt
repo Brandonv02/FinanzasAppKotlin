@@ -34,59 +34,45 @@ fun LoginScreen(onContinue: (String, Double) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
-            .background(Color.White),
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Bienvenido a Mi Finanzas",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF1976D2)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
+        Text("Bienvenido", style = MaterialTheme.typography.headlineMedium)
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Tu nombre") },
-            singleLine = true,
+            label = { Text("Nombre") },
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = salary,
             onValueChange = { salary = it },
             label = { Text("Sueldo mensual") },
-            singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )
 
         if (showError) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Por favor completa ambos campos correctamente.", color = Color.Red)
+            Text("Completa ambos campos correctamente", color = Color.Red)
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                val sueldoDouble = salary.toDoubleOrNull()
-                if (name.isNotBlank() && sueldoDouble != null) {
-                    showError = false
-                    onContinue(name, sueldoDouble)
+                val salaryValue = salary.toDoubleOrNull()
+                if (name.isNotBlank() && salaryValue != null) {
+                    onContinue(name, salaryValue)
                 } else {
                     showError = true
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Comenzar", color = Color.White)
+            Text("Comenzar")
         }
     }
 }

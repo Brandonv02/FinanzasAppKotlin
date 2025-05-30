@@ -11,98 +11,77 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.appfinanzas.components.AddExpenseDialog
+import com.example.appfinanzas.components.BodySection
+import com.example.appfinanzas.components.FooterSection
+import com.example.appfinanzas.components.HeaderSection
+import com.example.appfinanzas.viewmodel.FinanceViewModel
 
 @Composable
-fun FinanceHomeScreen() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xFFF5F5F5))) {
+fun FinanceHomeScreen(
+    userName: String,
+    userSalary: Double,
+    financeViewModel: FinanceViewModel
+) {
+    var showDialog by remember { mutableStateOf(false) }
 
-        // HEADER
-        HeaderSection()
-
-        // BODY
-        BodySection(modifier = Modifier
-            .weight(1f)
-            .padding(16.dp))
-
-        // FOOTER
-        FooterSection()
-    }
-}
-
-@Composable
-fun HeaderSection() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF1976D2))
-            .padding(24.dp)
-    ) {
-        Text(
-            text = "Mi Finanzas",
-            color = Color.White,
-            style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
-
-@Composable
-fun BodySection(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Text("Resumen mensual", style = MaterialTheme.typography.titleMedium)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(4.dp)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Ingresos: $4,000")
-                Text("Gastos: $2,500")
-                Text("Balance: $1,500")
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showDialog = true },
+                containerColor = Color(0xFF1976D2),
+                contentColor = Color.White
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Agregar gasto")
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Aquí puedes poner una lista de transacciones
-        Text("Últimas transacciones", style = MaterialTheme.typography.titleMedium)
-        // ...
-    }
-}
-
-@Composable
-fun FooterSection() {
-    BottomAppBar(containerColor = Color(0xFF1976D2)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
         ) {
-            IconButton(onClick = { /* TODO: Navegar */ }) {
-                Icon(Icons.Default.Home, contentDescription = "Inicio", tint = Color.White)
-            }
-            IconButton(onClick = { /* TODO: Agregar gasto */ }) {
-                Icon(Icons.Default.AddCircle, contentDescription = "Agregar", tint = Color.White)
-            }
-            IconButton(onClick = { /* TODO: Ver perfil */ }) {
-                Icon(Icons.Default.Person, contentDescription = "Perfil", tint = Color.White)
-            }
+            HeaderSection(userName, userSalary)
+            BodySection(
+                expenses = financeViewModel.expenses,
+                modifier = Modifier.weight(1f)
+            )
+            FooterSection()
+        }
+
+        if (showDialog) {
+            AddExpenseDialog(
+                onDismiss = { showDialog = false },
+                onSave = { description, amount ->
+                    financeViewModel.addExpense(description, amount)
+                    showDialog = false
+                }
+            )
         }
     }
 }
+
+
+
+
